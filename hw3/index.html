@@ -301,7 +301,111 @@
 		</p>
 
 		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Implementation</h3>
+		<p>
+			For each initial ray, first the zero bounce lighting is computed.
+			Then the global illumination is calculated recursively by calculating
+			the radiance from light that has at least one bounce.
+		</p>
+		<p>
+			At least one bounce radiance is calculated depending on the ray people depth.
+			<ul>
+				<li>
+					Ray depth less than one: Return black: ray depth max depth exeeded.
+				</li>
+				<li>
+					Ray depth equal to one: Return one bounce radiance (direct lighting):
+					reached max ray depth. Base case for recursion.
+				</li>
+			</ul>
+			Otherwise, we enter the main body.
+		</p>
+
+		<p>
+			If <code>isAccumBounces</code> is true, we add the one_bounce_radiance
+			at the current point to the result radiance.
+		</p>
+		<p>
+			We also perform Russian Roulette ray termination by returning the
+			radiance early with some probability, which is set to 0.3 in
+			this implementation.
+		</p>
+		<p>
+			Otherwise, we then sample a new light ray from the current point.
+			If that new ray doesn't intersect the scene, the function returns
+			the radiance. Otherwise, it recurses with the new ray and intersection point
+			to compute the radiance from the new ray.
+			That incoming radiance is used to calulate the outgoing radiance
+			at the current point according to the lighting equation,
+			similar to one bounce radiance.
+			Finally, the outgoing radiance is returned.
+		</p>
+
+		<h3>Global illumination examples</h3>
+		<figure>
+			<img src="images/part4/bunny_1024_16.png">
+		</figure>
+		<figure>
+			<img src="images/part4/spheres_1024_8.png">
+		</figure>
+
+		<h3>Direct and indirect illumination comparision</h3>
+		<figure>
+			<img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m1.png">
+			<figcaption>Only direct lighting</figcaption>
+		</figure>
+		<figure>
+			<img src="images/part4/indirect_only/bunny_indirect_only_1024_16.png">
+			<figcaption>Only indirect lighting</figcaption>
+		</figure>
+
+		<h3>Lighting from each bounce<h3>
+		<p>
+			These images are rendered without accumulating the light from previous bounces,
+			showing the contribution of each bounce of light.
+		</p>
+		<table>
+			<tr>
+				<th>Ray depth</th>
+				<th>Image</th>
+			<tr>
+				<td>0</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m0.png"></td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m1.png"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m2.png"></td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m3.png"></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m4.png"></td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m5.png"></td>
+			</tr>
+		</table>
+		<p>
+			The second bounce has reflected light from the wall on the bunny and the floor,
+			adding the red and blue shades to the bunny and floor in the complete image.
+			It also adds reflected light from the floor to the underside of the bunny,
+			preventing the bottom from being completely black.
+		</p>
+		<p>
+			The third bounce adds further red and blue shading to the bunny and floor.
+			Furthermore, the ceiling now has indirect lighting from the colored walls,
+			visible in the red and blue colors.
+		</p>
+
+		
 
 		<h2>Part 5: Adaptive Sampling</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
