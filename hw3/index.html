@@ -81,54 +81,140 @@
 
 		<h2>Part 3: Direct Illumination</h2>
 		
-		<p></p>
-		
-		<figure>
-			<img src="images/part3/dragon_64_32.png">
-			<figcaption>Light importance sampling</figcaption>
-		</figure>
+		<h3>Implementation</h3>
+		<p>
+			The general algorithm to make a Monte Carlo estimate
+			of the direct lighting at a point \( p \)
+			and along a ray in direction \( \omega_r \).
+			A sample is taken the light from an incoming direction \( \omega_j \),
+			with sample sample having a probability of \( p(\omega_j) \),
+			equivalent to sampling a ray that starts from the given point.
+			If the sampled ray intersects a light,
+			then the emitted lighting from the light \( L_i(p, \omega_j) \)
+			is used to calculate the incoming light along the original ray
+			and added to the estimate.
+		</p>
+		<p>
+			The reflectance from the point on the original object is calculated from
+			the object material's BSDF: \( f_r(\omega_i \to \omega_j) \).
+			For diffuse objects, the BSDF is constant: \( \frac{\rho}{pi} \)
+			where \( \rho \) is the material's reflectance spectrum.
+		</p>
+		<p>
+			Each sample of the incoming light is calculated using the reflection equation, where each sample is
+			\[
+				\frac{f_r(p, \omega_j \to \omega_r) L_i(p, \omega_j) \cos \theta_j}{p(\omega_j)}
+			\]
+		</p>
+		<p>
+			The numerator is the lighting equation.
+			The denominator is the normalizing constant for the Monte Carlo estimate.
+		</p>
+		<p>
+			A fixed number of samples is taken and the samples are averaged
+			to produce the final estimate.
+		</p>
+		<h4>Uniform hemisphere sampling</h4>
+		<p>
+			The difference between uniform hemisphere sampling and light importance sampling
+			is in how the samples for the incoming light rays are taken.
 
-		<figure>
-			<img src="images/part3/dragon_H64_32.png">
-			<figcaption>Uniform hemisphere sampling</figcaption>
-		</figure>
-		<figure>
-			<img src="images/part3/CBbunny_64_32.png">
-			<figcaption>Light importance sampling</figcaption>
-		</figure>
+			Uniform hemisphere sampling samples directions uniformly from the
+			hemisphere above a point, with each sample having probability of
+			\( \frac{1}{2\pi} \)
+		</p>
+		<h4>Light importance sampling</h4>
+		<p>
+			Light importance sampling only samples rays in the direction
+			of a light, only considering samples that have a chance of contribute
+			to lighting.
+			For each light in the scene, samples  from target point to the light are taken.
+		</p>
+		<p>
+			Point lights have only have one sample taken because there is only one
+			path for a ray from the light to the point.
 
-		<figure>
-			<img src="images/part3/CBbunny_H_64_32.png">
-			<figcaption>Uniform hemisphere sampling</figcaption>
-		</figure>
+			Area lights have a fixed number of samples taken.
+		</p>
 
 		<table>
 			<tr>
-				<td>1 light rays</td>
 				<td>
-					<img src="images/part3/bunny_1_1.png">
+					<figure>
+						<img src="images/part3/CBspheres_H64_32.png">
+						<figcaption>Uniform hemisphere sampling</figcaption>
+					</figure>
+				</td>
+				<td>
+					<figure>
+						<img src="images/part3/CBspheres_64_32.png">
+						<figcaption>Light importance sampling</figcaption>
+					</figure>
 				</td>
 			</tr>
 			<tr>
-				<td>4 light rays</td>
 				<td>
-					<img src="images/part3/bunny_1_4.png">
+					<figure>
+						<img src="images/part3/CBbunny_H_64_32.png">
+						<figcaption>Uniform hemisphere sampling</figcaption>
+					</figure>
 				</td>
-			</tr>
-			<tr>
-				<td>16 light rays</td>
 				<td>
-					<img src="images/part3/bunny_1_16.png">
-				</td>
-			</tr>
-			<tr>
-				<td>64 light rays</td>
-				<td>
-					<img src="images/part3/bunny_1_64.png">
+					<figure>
+						<img src="images/part3/CBbunny_64_32.png">
+						<figcaption>Light importance sampling</figcaption>
+					</figure>
 				</td>
 			</tr>
 		</table>
 
+		
+		
+		<h3>Comparison of number of rays per light using light sampling.</h3>
+		<p>All images generated with 1 sample per pixel</p>
+		<p>
+			Notice the great reduction in noise across the entire image,
+			especially in the soft shadow of the bunny under it.
+		</p>
+		
+		<figure>
+			<img src="images/part3/bunny_1_1.png">
+			<figcaption>1 light ray per pixel</figcaption>
+		</figure>
+
+		<figure>
+			<img src="images/part3/bunny_1_4.png">
+			<figcaption>4 light rays per pixel</figcaption>
+		</figure>
+
+		<figure>
+			<img src="images/part3/bunny_1_16.png">
+			<figcaption>16 light rays per pixel</figcaption>
+		</figure>
+
+		<figure>
+			<img src="images/part3/bunny_1_64.png">
+			<figcaption>64 light rays per pixel</figcaption>
+		</figure>
+
+		<h3>Comparision between uniform hemisphere sampling and lighting sampling</h3>
+
+		<p>
+			Lighting sampling generally has higher efficiency than uniform hemisphere
+			sampling, meaning less noise for the same number of light rays or rays per pixel.
+			In the comparison images above, this difference is most noticeable
+			in the walls and floor.
+
+			This is highly desirable to reduce the amount of compute required
+			for the same quality image.
+		</p>
+		<p>
+			This comes from the fact that lighting sampling only checks rays that
+			are in the direction of a light rather than in all directions.
+			The sampling distribution with lighting sampling
+			is closer to the true distribution compared to a uniform distribution,
+			so the variance is reduced.
+		</p>
 
 		<h2>Part 4: Global Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
