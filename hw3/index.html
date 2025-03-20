@@ -48,36 +48,120 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Ray Generation</h3>
+<p>Ray generation is the first step in the rendering pipeline, where we compute rays from the camera through each pixel of the image plane. In our implementation, we convert normalized image coordinates into camera space, apply the field of view transformations, and finally transform the ray direction into world space using the camera-to-world transformation matrix.</p>
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>
+<ul>
+  <li><b>Convert image-space coordinates to camera-space:</b> We use the horizontal (`hFov`) and vertical (`vFov`) field of view to map normalized image coordinates onto the canonical sensor plane.</li>
+  <li><b>Compute the ray direction in world space:</b> After computing the ray direction in camera space, we apply the camera-to-world transformation (`c2w`) to transform it into world coordinates.</li>
+  <li><b>Normalize the ray direction:</b> Ensuring the ray is unit-length helps with numerical stability in intersection calculations.</li>
+  <li><b>Construct the ray:</b> The ray is initialized with the camera's position (`pos`), direction, and clipping planes (`nClip`, `fClip`).</li>
+</ul>
+
+<h3>Primitive Intersection</h3>
+<p>Once rays are generated, they need to be tested against scene primitives (triangles and spheres) to determine where they intersect the geometry. We implemented efficient algorithms for both triangle and sphere intersections.</p>
+
+<h3>Triangle Intersection Algorithm</h3>
+<p>For triangle intersections, we used the Moller-Trumbore algorithm, which efficiently computes ray-triangle intersections without requiring explicit plane equations.</p>
+
+<ul>
+  <li><b>Step 1: Compute Intersection Information</b> - We call `moller_trumbore(this, r)`, which computes barycentric coordinates (`u, v`) and the intersection distance (`t`).</li>
+  <li><b>Step 2: Validate the Intersection</b> - We check whether the intersection is within the valid ray interval (`r.min_t <= t <= r.max_t`).</li>
+  <li><b>Step 3: Update Closest Intersection</b> - If the intersection is valid, we update `r.max_t` to ensure only the closest intersection is stored.</li>
+  <li><b>Step 4: Compute the Interpolated Normal</b> - We use barycentric coordinates to interpolate the normal at the hit point for smooth shading.</li>
+  <li><b>Step 5: Store Intersection Data</b> - We store the normal, `bsdf`, and intersection `t` value in the `Intersection` struct.</li>
+</ul>
+
+<h3>Sphere Intersection Algorithm</h3>
+<p>We also implemented ray-sphere intersection using the quadratic formula approach:</p>
+
+<ul>
+  <li><b>Step 1: Solve Quadratic Equation</b> - We compute `t1` and `t2` by solving the quadratic equation using the ray direction, origin, and sphere radius.</li>
+  <li><b>Step 2: Validate Intersection</b> - We check whether `t1` or `t2` is within the valid range.</li>
+  <li><b>Step 3: Compute Surface Normal</b> - The normal at the intersection point is computed as `normalize(intersect_point - sphere_center)`.</li>
+  <li><b>Step 4: Store Intersection Data</b> - We update the `Intersection` struct with normal, `bsdf`, and intersection `t`.</li>
+</ul>
+
+<h3>Rendered Images with Normal Shading</h3>
+<p>Below are images of small `.dae` files rendered with normal shading, showing how our ray generation and intersection algorithms produce correct geometry representations.</p>
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+  <table style="width: 100%; text-align: center; border-collapse: collapse;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="images/CBempty.png" width="400px"/>
+        <figcaption>CBempty.</figcaption>
+      </td>
+      <td style="text-align: center;">
+        <img src="images/CBspheres.png" width="400px"/>
+        <figcaption>CBSpheres.</figcaption>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: center;">
+        <img src="images/cube.png" width="400px"/>
+        <figcaption>Cube.</figcaption>
+	  </td>
+    </tr>
+  </table>
+</div>
+
+<p>These images show that our ray generation and intersection implementations correctly produce accurate geometric representations in the rendered scene.</p>
+
+
+
+
 		
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>BVH Construction Algorithm</h3>
+<p>To accelerate ray-scene intersection tests, we implemented a Bounding Volume Hierarchy (BVH) using a recursive top-down construction approach. The BVH is built by partitioning the primitives into two child nodes until the number of primitives in a node is at most a predefined <code>max_leaf_size</code>. The key steps are as follows:</p>
+
+<ul>
+  <li><b>Compute Bounding Box:</b> For each node, we calculate a bounding box that encompasses all primitives assigned to that node.</li>
+  <li><b>Base Case - Create a Leaf Node:</b> If the number of primitives is <= <code>max_leaf_size</code>, we create a leaf node storing these primitives.</li>
+  <li><b>Choosing a Splitting Axis:</b> We determine the axis with the largest extent (x, y, or z) and partition primitives along this axis.</li>
+  <li><b>Partitioning:</b> We use <code>std::nth_element()</code> to sort primitives by their centroids along the chosen axis and split at the median.</li>
+  <li><b>Recursive Construction:</b> The primitive list is split into two subsets, and we recursively build the left and right child nodes.</li>
+</ul>
+
+<h3>Heuristic for Choosing the Splitting Point</h3>
+<p>We chose the <b>median split heuristic</b> for partitioning primitives. By splitting along the axis with the largest extent, we aim to achieve a balanced BVH with minimal overlap between bounding volumes. This heuristic provides a good trade-off between computational efficiency and spatial coherence, reducing the number of intersection tests required during rendering.</p>
+
+<h3>Rendered Images with BVH Acceleration</h3>
+<p>Below are images of complex <code>.dae</code> models that could only be rendered efficiently using BVH acceleration.</p>
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+  <table style="width: 100%; text-align: center; border-collapse: collapse;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="images/cow_bvh.png" width="400px"/>
+        <figcaption>Rendered cow model using BVH.</figcaption>
+      </td>
+      <td style="text-align: center;">
+        <img src="images/maxplank.png" width="400px"/>
+        <figcaption>Rendered Max Planck model using BVH.</figcaption>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: center;">
+        <img src="images/CBlucy.png" width="400px"/>
+        <figcaption>Rendered CBlucy model using BVH.</figcaption>
+      </td>
+      <td style="text-align: center;">
+        <img src="images/dragon.png" width="400px"/>
+        <figcaption>Rendered Dragon model using BVH.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3>Performance Comparison</h3>
+<p>We tested our BVH implementation on moderately complex geometries and compared rendering times with and without BVH acceleration.</p>
+
+<h3>Analysis</h3>
+<p>The results clearly show that BVH acceleration significantly improves rendering times, achieving 7-9x speedup for moderately complex models. Without BVH, the path tracer must check for intersections against every primitive, leading to O(n) complexity. With BVH, our logarithmic O(log n) traversal drastically reduces the number of intersection tests, making rendering feasible even for large scenes.</p>
+
+<p>While our median split heuristic performed well, using a more advanced Surface Area Heuristic (SAH) could further optimize partitioning and traversal. Nonetheless, our implementation demonstrates the crucial role of BVH in accelerating ray tracing, making complex scene rendering significantly more efficient.</p>
 
 		<h2>Part 3: Direct Illumination</h2>
 		
