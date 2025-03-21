@@ -157,9 +157,10 @@
 
 <h3>Performance Comparison</h3>
 <p>We tested our BVH implementation on moderately complex geometries and compared rendering times with and without BVH acceleration.</p>
+<p>Using 8 threads, without BVH, rendering <code>cow.dae</code> took 112s. With BVH, rendering took 0.0592s.</p>
 
 <h3>Analysis</h3>
-<p>The results clearly show that BVH acceleration significantly improves rendering times, achieving 7-9x speedup for moderately complex models. Without BVH, the path tracer must check for intersections against every primitive, leading to O(n) complexity. With BVH, our logarithmic O(log n) traversal drastically reduces the number of intersection tests, making rendering feasible even for large scenes.</p>
+<p>The results clearly show that BVH acceleration significantly improves rendering times, achieving upwards of 200x speedups for moderately complex models. Without BVH, the path tracer must check for intersections against every primitive, leading to O(n) complexity. With BVH, our logarithmic O(log n) traversal drastically reduces the number of intersection tests, making rendering feasible even for large scenes.</p>
 
 <p>While our median split heuristic performed well, using a more advanced Surface Area Heuristic (SAH) could further optimize partitioning and traversal. Nonetheless, our implementation demonstrates the crucial role of BVH in accelerating ray tracing, making complex scene rendering significantly more efficient.</p>
 
