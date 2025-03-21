@@ -359,6 +359,9 @@
 			<figcaption>Only indirect lighting</figcaption>
 		</figure>
 
+		Notice the colors on the bunny, wall, and ceiling from indirect lighting,
+		while all lighting in the direct lighting image is white.
+
 		<h3>Lighting from each bounce<h3>
 		<p>
 			These images are rendered without accumulating the light from previous bounces,
@@ -405,7 +408,113 @@
 			visible in the red and blue colors.
 		</p>
 
+		<h3>Accumulated vs Unaccumulated bounces</h3>
+		<table>
+			<tr>
+				<th>Max ray depth</th>
+				<th>Accumulated bounces</th>
+				<th>Unaccumulated bounces</th>
+			</tr>
+			<tr>
+				<td>0</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m0.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m0.png"></td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m1.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m1.png"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m2.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m2.png"></td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m3.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m3.png"></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m4.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m4.png"></td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td><img src="images/part4/bunny_accum/bunny_1024_accum_m5.png"></td>
+				<td><img src="images/part4/bunny_no_accum/bunny_1024_unaccum_m5.png"></td>
+			</tr>
+		</table>
 		
+
+		<h3>Russian Roulette</h3>
+		<table>
+			<tr>
+				<th>Ray depth</th>
+				<th>Image</th>
+			<tr>
+				<td>0</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_0.png"></td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_1.png"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_2.png"></td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_3.png"></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_4.png"></td>
+			</tr>
+			<tr>
+				<td>100</td>
+				<td><img src="images/part4/bunny_ray_depth_compare/bunny_1024_m_100.png"></td>
+			</tr>
+		</table>
+
+		<h3>Samples per pixel comparison</h3>
+		<p>Rendered using 4 samples per light</p>
+		<table>
+			<tr>
+				<th>Samples per pixel</th>
+				<th>Image</th>
+			<tr>
+				<td>1</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_1_4.png"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_2_4.png"></td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_4_4.png"></td>
+			</tr>
+			<tr>
+				<td>8</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_8_4.png"></td>
+			</tr>
+			<tr>
+				<td>16</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_16_4.png"></td>
+			</tr>
+			<tr>
+				<td>64</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_64_4.png"></td>
+			</tr>
+			<tr>
+				<td>1024</td>
+				<td><img src="images/part4/sample_per_pixel_compare/bunny_1024_4.png"></td>
+			</tr>
+		</table>
+
 
 		<h2>Part 5: Adaptive Sampling</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
