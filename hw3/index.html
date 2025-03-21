@@ -517,21 +517,54 @@
 
 
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Adaptive sampling aims to improve the efficiency of rendering noise-free images
+		by using more samples for difficult, noisy pixels.
 
-		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			This is accomplished by tracking the mean and variance of samples for each pixel
+			and stopping sampling early if the margin of error is small enough.
+		</p>
+		<p>
+			For each pixel, the running sum of the illuminance \( s_1 \) of each sample
+			and running sum of square illuminance \(s_2 \) is tracked.
+			These values are used to calculate the mean and variance as
+			\( \mu = \frac{s_1}{n} \) and \( \sigma^2 = \frac{1}{n - 1} \left(s_2 - \frac{s_1^2}{n} \right) \),
+			where \(n \) is the number of samples so far.
+		</p>
+		<p>
+			\( I = 1.96 \left( \frac{\sigma}{\sqrt{n}} \right) \) measures the pixel's convergence.
+			If \(I \le k \cdot \mu \), for \(k \) representing the max tolerance,
+			the pixel is considered converged and rendering moves on to the next pixel.
+			\(k = 0.05 \) by default.
+		</p>
+
+		<h3>Sampling rate demonstrations</h3>
+		<figure>
+			<img src="images/part5/bunny_2048_1.png">
+			<img src="images/part5/bunny_2048_1_rate.png">
 		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+			<figcaption>
+				Rendered image and the sampling rate per pixel.
+				Red represents high sampling rates, blue for low.
+				Rendered with 1 sample per light, max ray depth of 5,
+				at most 2048 samples per pixel.
+			</figcaption>
+		</figure>
+
+		<figure>
+			<img src="images/part5/spheres_2048_1.png">
+			<img src="images/part5/spheres_2048_1_rate.png">
+		
+			<figcaption>
+				Rendered image and the sampling rate per pixel.
+				Red represents high sampling rates, blue for low.
+				Rendered with 1 sample per light, max ray depth of 5,
+				at most 2048 samples per pixel.
+			</figcaption>
+		</figure>
+
+		<!-- <h2>(Optional) Part 6: Extra Credit Opportunities</h2>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. -->
 		</div>
 	</body>
 </html>
