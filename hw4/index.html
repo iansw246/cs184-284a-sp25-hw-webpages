@@ -83,6 +83,54 @@
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Part 3: Handling collisions with other objects</h2>
+		<h3>Implementation</h3>
+		The cloth can intersect with spheres and planes.
+		<h4>Spheres</h4>
+		<p>
+			For sphere intersection, each the distance from
+			each point mass to each sphere's center is checked.
+			If the distance less than the sphere's radius, the point mass has
+			collided with the sphere.
+			In this case, we calculate the tangent point on the sphere's
+			surface that the point mass would have collided with if it did
+			not go through the sphere. Finally, we adjust the point mass's
+			position toward the tangent point scaled by friction.
+		</p>
+		<h4>Planes</h4>
+		<p>
+			Plane intersection is checked by checking for line-plane intersection
+			along the line segment from the old to the new position.
+			This is accomplished by solving the following equation for \(d \):
+			\[
+				(p - p_0) \cdot n = p_0 + (p_1 - p_0) d
+			\]
+			where \( p \) is a point in the plane, \( n \) is the plane's normal vector,
+			and \( p_0, p_1 \) is the point mass's old and new position, respectively.
+		</p>
+		<p>
+			If \( 0 \lt d \lt 1 \), then a collision has occurred.
+			The point on the plane that the point mass would have collided with
+			if it did not go through the plane is called the tangent point
+			and is equal to \(p_0 + d (p_1 - p_0) \).
+			To offset slightly above the plane,
+			\( d - \delta \) is used instead of \( d \) for the above equation
+			where \( \delta \) is a small constant.
+			The vector from the old position to the new point above the plane
+			is called the correction vector.
+		</p>
+		<p>
+			Finally, the point mass's position is adjusted by correction vector
+			scaled by \( 1 - f \) where \( f \) is the friction.
+		</p>
+
+		TODO Shaded cloth different ks
+		
+		<figure>
+			<img src="images/plane.png">
+			<figcaption>The cloth lying at rest on the plane</figcaption>
+		</figure>
+
+
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Part 4: Handling self-collisions</h2>
