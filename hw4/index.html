@@ -124,7 +124,7 @@
 		</p>
 
 		TODO Shaded cloth different ks
-		
+
 		<figure>
 			<img src="images/plane.png">
 			<figcaption>The cloth lying at rest on the plane</figcaption>
@@ -134,7 +134,43 @@
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Part 4: Handling self-collisions</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Implementation</h3>
+		<p>
+			To handle self-collisions efficiently, each point mass of the cloth
+			is assigned to a box based on its position.
+			When checking collisions, only points in the same and adjacent boxes
+			must be checked.
+		</p>
+		<p>
+			The 3D space is partitioned into 3D boxes. For a cloth with dimensions
+			\( w \times h \) and \( n_w \times n_h \) points spanning the width and height,
+			the box dimensions are
+			\( \frac{3w}{n_w} \times \frac{3h}{n_h} \times \max(\frac{3w}{n_w}, \frac{3h}{n_h}) \).
+			Each coordinate of a point mass's position is floor divided by the size of a box
+			in the corresponding coordinate to get the integer coordinate of the
+			box.
+		</p>
+		<p>
+			In each simulation step, the hash table is first built.
+			Then for each point, the distance from all other points in the same box
+			are checked. If the distance is less than
+			\(2 \ast thickness \), they are considered to have collided.
+			The vector needed to move the initial point to a
+			distance \(2 \ast thickness \) from the other, called the correction vector,
+			is calculated. The average of all correction vectors over all
+			colliding points, scaled down by the number of simulation steps,
+			is the final adjustment to the point's position.
+		</p>
+		<p>
+			The following screenshots show the progression of a
+			cloth folding on itself.
+
+			<figure>
+				<img src="images/self-collide-1.png">
+				<img src="images/self-collide-2.png">
+				<img src="images/self-collide-3.png">
+			</figure>
+		</p>
 
 		<h2>Part 5: Shaders</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
