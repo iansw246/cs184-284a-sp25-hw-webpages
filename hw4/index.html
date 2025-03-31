@@ -173,21 +173,141 @@
 		</p>
 
 		<h2>Part 5: Shaders</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Shader programs</h3>
+		<p>
+			A shader is an isolated GPU program used to perform rendering on
+			the GPU in parallel. Two main types of shader programs are:
+			<ul>
+				<li>
+					vertex shaders: generally operate on each vertex to transform
+					properties such as position.
+				</li>
+				<li>
+					fragment shaders: processes each fragment to calculate
+					the fragment's color from  operations such as shading.
+					Fragments are used to create the final colors of output pixels.
+				</li>
+			</ul>
+		</p>
+
+		<h3>Blinn-Phong</h3>
+		The Blinn-Phong shading model simulates lighting by considering three
+		components that make up the reflected light from a point on a surface
+		of a material: ambient, diffuse, and specular.
+		The equation for the resulting lighting \( L \) from Blinn-Phong lighting is
+		\( L = L_a + L_d + L_s \), which each term representing the corresponding
+		component as described previously.
+
+		<p>
+			The ambient lighting component is simply a constant color added to the
+			resulting lighting. This simulates light coming from all directions
+			and fills in black shadows. The equation for ambient lighting \( \mathbf{L_a} \)
+			is simple: For ambient lighting with intensity \( \mathbf{I_a} \) and
+			an ambient constant \( k_a \), which controls the strength of ambient
+			lighting relative to the other lighting terms, the equation is
+			\[
+				\mathbf{L_a} = k_a \mathbf{I_a}
+			\]
+		</p>
+		<figure>
+			<img src="images/phong-ambient-only.png">
+			<figcaption>The ambient component of Blinn-Phong</figcaption>
+		</figure>
+		<p>
+			The diffuse component represents matte reflections, which are
+			reflections that don't depend on the viewing angle, only
+			the angle of incoming lighting relative to the surface's normal.
+			This is shown in the formula for diffuse lighting:
+			\[
+				\mathbf{L_d} = k_d \frac{I}{r^2} \max(0, \mathbf{n} \cdot \mathbf{l})
+			\]
+
+			Where the lighting depends on the cosine angle between the
+			surface's normal vector and the vector from the given point to the light
+			\( \mathbf{n} \cdot \mathbf{l} \).
+		</p>
+		<figure>
+			<img src="images/phong-diffuse-only.png">
+			<figcaption>The diffuse component of Blinn-Phong</figcaption>
+		</figure>
+		<p>
+			The last component is the specular component. This represents
+			direct, mirror-like reflections.
+
+			The equation for the specular component is
+			\[
+				\mathbf{L_s} = k_s \frac{\mathbf{I}{r^2}} \max(0, \mathbf{n} \cdot \mathbf{h})^p
+			\]
+		</p>
+		<figure>
+			<img src="images/phong-specular-only.png">
+			<figcaption>The specular component of Blinn-Phong</figcaption>
+		</figure>
+
+		<figure>
+			<img src="images/phong-all.png">
+			<figcaption>The entire Blinn-Phong model</figcaption>
+		</figure>
+		<h3>Texture mapping</h3>
+		<figure>
+			<img src="images/texture-map.png">
+			<figcaption>An example of the texture mapping shader with a custom texture</figcaption>
+		</figure>
+
+		<h3>Bump mapping and displacement mapping</h3>
+		<figure>
+			<img src="images/bump-plane.png">
+			<figcaption>Bump mapping on a plane</figcaption>
+		</figure>
+		<figure>
+			<img src="images/bump-sphere.png">
+			<figcaption>Bump mapping on a sphere</figcaption>
+		</figure>
+		<figure>
+			<img src="images/displacement-sphere.png">
+			<figcaption>Displacement mapping on a sphere</figcaption>
+		</figure>
+		<p>
+			Both approaches create similar texture effects with the
+			illusion of depth in the sphere's texture.
+			However, displacement mapping also changes the position of the
+			vertices, as is visible in the edges of the sphere.
+		</p>
+		<h3>Coarseness comparison</h3>
+		<figure>
+			<img src="images/bump-sphere-coarse-16.png">
+			<figcaption>Bump mapping on a sphere with coarseness 16</figcaption>
+		</figure>
+		<figure>
+			<img src="images/bump-sphere-coarse-128.png">
+			<figcaption>Bump mapping on a sphere with coarseness 128</figcaption>
+		</figure>
+		<figure>
+			<img src="images/displacement-sphere-coarse-16.png">
+			<figcaption>Displacement mapping on a sphere with coarseness 16</figcaption>
+		</figure>
+		<figure>
+			<img src="images/displacement-sphere-coarse-128.png">
+			<figcaption>Displacement mapping on a sphere with coarseness 128</figcaption>
+		</figure>
+		<p>
+			Coarseness has little effect on bump mapping,
+			but on displacement mapping, the vertices are adjusted at higher frequencies
+			and the sphere has a rougher edge with increasing coarseness levels.
+		</p>
+
+		<h3>Mirror shader</h3>
+		<figure>
+			<img src="images/mirror-plane.png">
+			<figcaption>The mirror shader on a plane</figcaption>
+		</figure>
+		<figure>
+			<img src="images/mirror-plane.png">
+			<figcaption>The mirror shader on a cloth</figcaption>
+		</figure>
 
 		<h2>(Optional) Part 6: Extra Credit - Additional cloth simulation features!</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
 		</div>
 	</body>
 </html>
