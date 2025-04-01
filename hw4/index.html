@@ -85,6 +85,7 @@
 		<h2>Part 3: Handling collisions with other objects</h2>
 		<h3>Implementation</h3>
 		The cloth can intersect with spheres and planes.
+
 		<h4>Spheres</h4>
 		<p>
 			For sphere intersection, each the distance from
@@ -123,15 +124,30 @@
 			scaled by \( 1 - f \) where \( f \) is the friction.
 		</p>
 
-		TODO Shaded cloth different ks
-
+		<h3>Cloth on Sphere</h3>
+		A cloth in its final resting state on a sphere, with it different
+		spring tension values (ks), in N/m.
 		<figure>
-			<img src="images/plane.png">
-			<figcaption>The cloth lying at rest on the plane</figcaption>
+			<img src="images/cloth-on-sphere-ks500.png">
+			<figcaption>ks = 500</figcaption>
 		</figure>
-
-
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<figure>
+			<img src="images/cloth-on-sphere-ks5000.png">
+			<figcaption>ks = 5000</figcaption>
+		</figure>
+		<figure>
+			<img src="images/cloth-on-sphere-ks50000.png">
+			<figcaption>ks = 50000</figcaption>
+		</figure>
+		At the lowest spring tension value of 500 N/m, the cloth drapes
+		vertially downward significantly and splays to the side very little.
+		As the spring tension increases, the cloth hangs down less and fans
+		out sideways more.
+		
+		<figure>
+			<img src="images/shaded-cloth-plane-intersection.png">
+			<figcaption>The shaded cloth lying at rest on the plane</figcaption>
+		</figure>
 
 		<h2>Part 4: Handling self-collisions</h2>
 		<h3>Implementation</h3>
@@ -256,8 +272,8 @@
 
 		<h3>Bump mapping and displacement mapping</h3>
 		<figure>
-			<img src="images/bump-plane.png">
-			<figcaption>Bump mapping on a plane</figcaption>
+			<img src="images/bump-cloth.png">
+			<figcaption>Bump mapping on a cloth</figcaption>
 		</figure>
 		<figure>
 			<img src="images/bump-sphere.png">
@@ -298,11 +314,11 @@
 
 		<h3>Mirror shader</h3>
 		<figure>
-			<img src="images/mirror-plane.png">
-			<figcaption>The mirror shader on a plane</figcaption>
+			<img src="images/mirror-sphere.png">
+			<figcaption>The mirror shader on a sphere</figcaption>
 		</figure>
 		<figure>
-			<img src="images/mirror-plane.png">
+			<img src="images/mirror-cloth.png">
 			<figcaption>The mirror shader on a cloth</figcaption>
 		</figure>
 
