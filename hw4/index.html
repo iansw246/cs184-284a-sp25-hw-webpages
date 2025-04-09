@@ -28,15 +28,15 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 4 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names:Arhaan Aggarwal & Ian Wong </div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw4-arhaan-ian.git">https://github.com/cal-cs184-student/sp25-hw4-arhaan-ian.git</a>
 
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to Webpage : (TODO) <a href="https://iansw246.github.io/cs184-284a-sp25-hw-webpages/hw4/index.html">https://iansw246.github.io/cs184-284a-sp25-hw-webpages/hw4/index.html</a>
 
 		<figure>
 			<img src="clothsim.png" alt="Cloth draped over sphere" style="width:70%"/>
@@ -48,39 +48,135 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+		<p>
+			In this homework, we implemented a physically-based cloth simulation system from the ground up. We started by building a mass-spring model, creating a 2D grid of point masses connected by structural, shearing, and bending springs. We then simulated the cloth's motion using Verlet integration and enforced spring length constraints to prevent unrealistic stretching.
+			</p>
+			
+			<p>
+			Next, we implemented collision handling with both external objects, like planes and spheres, and the cloth itself (self-collisions). We also applied a range of shading techniques — including diffuse and Blinn-Phong shading — and experimented with bump mapping, displacement mapping, and environment mapping to add visual richness to the simulated cloth.
+			</p>
+			
+			<p>
+			Through this assignment, we developed a deeper understanding of how physics-based simulation interacts with numerical stability and visual rendering. It was fascinating to see how small changes in simulation parameters like spring constant, density, and damping could dramatically alter the cloth's behavior. Overall, this project gave us valuable insight into the intersection of simulation and graphics.
+			</p>
 		<h2>Part 1: Masses and springs</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>
+		In this part of the assignment, we implemented the <code>buildGrid()</code> function, which constructs a cloth as a 2D grid of point masses connected by springs. Each point mass is positioned according to the cloth's width and height and is optionally pinned based on the input JSON. The springs enforce physical constraints between the point masses. I implemented three types of springs:
+		</p>
+		<ul>
+		  <li><strong>Structural:</strong> Connects each point mass to its immediate horizontal and vertical neighbors.</li>
+		  <li><strong>Shearing:</strong> Connects each point mass diagonally to its adjacent neighbors, forming a crisscross pattern.</li>
+		  <li><strong>Bending:</strong> Connects each point mass to its second-nearest neighbors in both the horizontal and vertical directions.</li>
+		</ul>
+		
+		<p>
+		Below are screenshots from <code>scene/pinned2.json</code> showing the cloth wireframe with different combinations of spring constraints. I chose a camera angle where the mesh is clearly visible.
+		</p>
+		
 		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
+		  <table style="width: 100%; text-align: center; border-collapse: collapse;">
+			<tr>
+			  <td>
+				<img src="p1_structural_only.png" width="400px"/>
+				<figcaption>(1)No Shearing Constraints</figcaption>
+			  </td>
+			  <td>
+				<img src="p1_shearing_only.png" width="400px"/>
+				<figcaption>(2) Only shearing constraints.</figcaption>
+			  </td>
+			</tr>
+			<tr>
+			  <td colspan="2">
+				<img src="p1_all_constraints.png" width="400px"/>
+				<figcaption>(3) All constraints: structural, shearing, and bending springs create a dense mesh.</figcaption>
+			  </td>
+			</tr>
+		  </table>
 		</div>
+		
+		<p>
+		When only shearing springs are disabled, the wireframe resembles a simple grid or "guy" silhouette. When shearing springs are enabled, a diagonal pattern appears, stabilizing the mesh against deformation. Enabling all constraints results in a denser, more realistic cloth structure, improving stability and reducing sag.
+		</p>
 
 		<h2>Part 2: Simulation via numerical integration</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<p>
+In this part, I implemented Verlet integration to simulate cloth motion by computing forces acting on point masses and updating their positions over time. I then experimented with various simulation parameters to observe how they affect cloth behavior from start to rest.
+</p>
+
+<h3>Spring Constant \( k_s \)</h3>
+<p>
+The spring constant determines the stiffness of the springs between point masses. With a <strong>very low \( k_s \)</strong> (e.g., 500), the cloth becomes soft and loose. It stretches significantly and sags under gravity, often lacking enough force to return to shape. With a <strong>high \( k_s \)</strong> (e.g., 20000), the cloth becomes very stiff. It barely stretches and maintains a tight shape, but also exhibits visible jittering or oscillations as it over-corrects during collisions and spring constraint enforcement.
+</p>
+
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+  <figure>
+    <img src="ks_low.png" width="350px" />
+    <figcaption>Low \( k_s \): cloth droops heavily and stretches</figcaption>
+  </figure>
+  <figure>
+    <img src="ks_high.png" width="350px" />
+    <figcaption>High \( k_s \): cloth remains tight and slightly rigid</figcaption>
+  </figure>
+</div>
+
+<h3>Density</h3>
+<p>
+Increasing the cloths <strong>density</strong> makes it heavier. With high density (e.g., 500), the cloth falls faster and compresses more under gravity. If the springs arent strong enough, this can lead to noticeable sagging. With low density (e.g., 5), the cloth is much lighter and appears to float or oscillate more in response to spring forces.
+</p>
+
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+  <figure>
+    <img src="density_low.png" width="350px" />
+    <figcaption>Low density: cloth reacts more sensitively to forces</figcaption>
+  </figure>
+  <figure>
+    <img src="density_high.png" width="350px" />
+    <figcaption>High density: cloth is heavier and sags more deeply</figcaption>
+  </figure>
+</div>
+
+<h3>Damping</h3>
+<p>
+Damping controls how much motion is resisted over time. With <strong>low damping</strong> (e.g., 0.01), the cloth bounces or oscillates for a long time before settling. With <strong>high damping</strong> (e.g., 0.9), the cloth quickly stabilizes but may look unnaturally stiff. A medium value (e.g., 0.2) provides a natural decay of motion.
+</p>
+
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+  <figure>
+    <img src="damping_low.png" width="350px" />
+    <figcaption>Low damping: cloth keeps oscillating</figcaption>
+  </figure>
+  <figure>
+    <img src="damping_high.png" width="350px" />
+    <figcaption>High damping: cloth freezes quickly</figcaption>
+  </figure>
+</div>
+
+<h3>Final Resting State</h3>
+<p>
+Here is a screenshot of the cloth in its final resting state using the default parameters from <code>pinned4.json</code>:
+</p>
+
+<div style="text-align: center;">
+  <figure>
+    <img src="resting_state.png" width="500px" />
+    <figcaption>Shaded cloth at rest (default)</figcaption>
+  </figure>
+</div>
+<div style="text-align: center;">
+  <figure>
+    <img src="resting_state2.png" width="500px" />
+    <figcaption>Shaded cloth at rest (default)</figcaption>
+  </figure>
+</div>
+
+<p>
+These experiments gave us a better understanding of how physical parameters interact to produce different cloth behaviors. Adjusting density, stiffness, and damping lets us simulate different types of materials from light silk to heavy canvas and observe their dynamic responses to forces and constraints.
+</p>
+
+
+
 
 		<h2>Part 3: Handling collisions with other objects</h2>
 		<h3>Implementation</h3>
